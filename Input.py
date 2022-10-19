@@ -296,8 +296,7 @@ for EC in range(0,20):
     #for each part
     for prt in range(parts):
         
-        #take stock from skymaster_level 2 column 'Current_Stocklevel' 
-        #-> divide by 1000 due to decimal system, might not be necessary in impact
+        #-> divide by 1000 due to decimal system, might not be necessary
         stock[prt]=int(problem_df['Current_Stocklevel'][prt]/1000)
         
         #Take array of call_offs_list -> directly in impact, not necessary to translate ast.liter
