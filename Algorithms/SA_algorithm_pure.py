@@ -1,10 +1,11 @@
-#!/usr/bin/env python
-# coding: utf-8
+""" This script defines the Simmulated Annealing Algortihm. 
+***
+Its base functions and code were taken from: Mostapha Kalami Heris, Practical Genetic Algorithms in Python and MATLAB – Video Tutorial (URL: https://yarpiz.com/632/ypga191215-practical-genetic-algorithms-in-python-and-matlab), Yarpiz, 2020. 
+and adapted for the Simmulated Annealing application and to the Engineering Change domain.
+***
+"""
 
-# # The SA Algorithm
-
-# In[46]:
-
+# The SA Algorithm
 
 def sa_run(problem, params):
     
@@ -39,19 +40,19 @@ def sa_run(problem, params):
     #generate initial random solution
     validity=0
     init_sol=copy.deepcopy(empty_individual)
-    #while validity < 1:
-    #    validity=0
+    while validity < 1:
+        validity=0
     init_sol['position'] = best_init
     init_sol['stock'] = st(init_sol['position'])
     init_sol['cost']= cf(init_sol['position'])
 
-    #    for j in range (0, no_parts):
-    #        if (init_sol['stock'][j]<0):
-    #            validity -= 1
-    #       else:
-    #            validity += 1
-    #        
-    #    validity/= no_parts
+        for j in range (0, no_parts):
+            if (init_sol['stock'][j]<0):
+                validity -= 1
+           else:
+                validity += 1
+
+        validity/= no_parts
     
     if init_sol['cost']<bestsol['cost']:
         bestsol=copy.deepcopy(init_sol)
@@ -129,18 +130,10 @@ def sa_run(problem, params):
     
     return out
 
-
-# In[47]:
-
-
 def apply_bound (x, vmin, vmax):
     x['position'] = np.maximum(x['position'], vmin) #replace invalid value with minimum possible value
     x['position'] = np.minimum(x['position'], vmax-1) #replace invalid value with maximum possibe value
     return x
-
-
-# In[48]:
-
 
 def roulette_wheel_selection(n):
     c = np.cumsum(n)
