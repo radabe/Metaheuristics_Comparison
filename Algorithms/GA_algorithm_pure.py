@@ -7,6 +7,8 @@ and adapted for the application to the Engineering Change domain.
 
 # The Genetic Algorithm
 
+"""
+
 
 def ga_run (problem, params):
     
