@@ -22,10 +22,7 @@ def aco_run(problem, params):
     init_pop = problem['init_pop']
     best_init = problem['best_init']
     validity=0
-    
-    print(vmin)
-    print(vmax)
-    
+      
     # Parameters
     maxit = params['maxit'] # number of iterations
     alpha = params['alpha'] #Pheromone influence
