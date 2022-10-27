@@ -1,10 +1,13 @@
-#!/usr/bin/env python
-# coding: utf-8
+""" This script defines the Genetic Algortihm. 
 
-# # The Ant Colony Optimisation Algorithm
+***
+Its base functions and code were taken from: Mostapha Kalami Heris, Practical Genetic Algorithms in Python and MATLAB – Video Tutorial (URL: https://yarpiz.com/632/ypga191215-practical-genetic-algorithms-in-python-and-matlab), Yarpiz, 2020. 
+and adapted for the application to the Engineering Change domain.
+***
 
-# In[1]:
+"""
 
+# The Ant Colony Optimisation Algorithm
 
 def aco_run(problem, params):
     
@@ -126,10 +129,6 @@ def aco_run(problem, params):
     return out
     
 
-
-# In[2]:
-
-
 def calculate_probability(x,y,phero,alpha,beta):
     #x last variable to be calculated
     #y last day to be calculated
@@ -139,10 +138,6 @@ def calculate_probability(x,y,phero,alpha,beta):
     for i in range(varmax):
         denominator+=phero[(x*varmax)+y][((x+1)*varmax)+y+i]
     probability = phero[(x*varmax)+y][(((x+1)*varmax)-1):(((x+1)*varmax)+varmax-1)]/denominator
-
-
-# In[3]:
-
 
 def next_value(x,y,phero,alpha,beta,n):
     #x last variable to be calculated
@@ -157,9 +152,6 @@ def next_value(x,y,phero,alpha,beta,n):
     r=np.random.rand()
     ind = np.argwhere(r<=c)
     return ind[0][0]
-
-
-# In[ ]:
 
 
 
