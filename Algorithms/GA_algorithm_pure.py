@@ -130,9 +130,13 @@ def ga_run (problem, params):
                 if c1['stock'][j]<0:
                     validity= validity-1
             if validity >= 0:
+                # Add Offspring to popc
+                popc.append(c1)
+                
+                # Check if cost better than for initial solution
                 if c1['cost'] < bestsol['cost']:
                     bestsol = copy.deepcopy(c1)
-                    popc.append(c1)
+
             validity = 0
                 
             # Evaluate Second Offspring
@@ -142,12 +146,16 @@ def ga_run (problem, params):
                 if c2['stock'][j]<0:
                     validity= validity-1
             if validity >= 0:
+                # Add Offspring to popc
+                popc.append(c2)
+                
+                # Check if cost better than for initial solution
                 if c2['cost'] < bestsol['cost']:
                     bestsol = copy.deepcopy(c2)
-                    popc.append(c2)
+
             validity = 0
                   
-            # Add Offspring to popc
+            
             
             
         # Merge, Sort and Select new pop
