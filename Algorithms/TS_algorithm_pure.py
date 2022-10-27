@@ -1,10 +1,11 @@
-#!/usr/bin/env python
-# coding: utf-8
+""" This script defines the Tabu Search Algortihm. 
+***
+Its base functions and code were taken from: Mostapha Kalami Heris, Practical Genetic Algorithms in Python and MATLAB – Video Tutorial (URL: https://yarpiz.com/632/ypga191215-practical-genetic-algorithms-in-python-and-matlab), Yarpiz, 2020. 
+and adapted for the Tabu Search application and to the Engineering Change domain.
+***
+"""
 
-# # The TS Algorithm
-
-# In[1]:
-
+# The TS Algorithm
 
 def ts_run(problem, params):
     
@@ -18,9 +19,7 @@ def ts_run(problem, params):
     indep=problem['independency']
     best_init = problem['best_init']
     validity=0
-    
-    #print(best_init)
-    
+        
     # Parameters
     maxit = params['maxit'] # number of iterations
     neighbors = params['npop'] #size of neigborhood [10,50]
@@ -40,33 +39,31 @@ def ts_run(problem, params):
     init_sol=copy.deepcopy(empty_individual)
     
     #generate initial random solution
-    #validity=0
+    validity=0
     
-    #while validity < 1:
-    #    validity=0
-    #    init_sol['position'] = np.random.randint(vmin,vmax, number_var)
-    #    #set all effectivity dates to same value
-    #    if indep == 0:
-    #        for j in range(number_var):
-    #            if ((j%3==1)&(j>2)):
-    #                init_sol['position'][j]=init_sol['position'][j-int(number_var/no_parts)]
-    #    
-    #    init_sol['stock'] = st(init_sol['position'])
-    #    init_sol['cost']= cf(init_sol['position'])
-    #    
-    #    for j in range (0, no_parts):
-    #        if (init_sol['stock'][j]<0):
-    #            validity -= 1
-    #        else:
-    #            validity += 1
-    #        
-    #    validity/= no_parts
+    while validity < 1:
+       validity=0
+       init_sol['position'] = np.random.randint(vmin,vmax, number_var)
+       #set all effectivity dates to same value
+       if indep == 0:
+           for j in range(number_var):
+               if ((j%3==1)&(j>2)):
+                   init_sol['position'][j]=init_sol['position'][j-int(number_var/no_parts)]
+       
+       init_sol['stock'] = st(init_sol['position'])
+       init_sol['cost']= cf(init_sol['position'])
+       
+       for j in range (0, no_parts):
+           if (init_sol['stock'][j]<0):
+               validity -= 1
+           else:
+               validity += 1
+           
+       validity/= no_parts
     
     init_sol['position'] = best_init
     init_sol['stock'] = st(init_sol['position'])
     init_sol['cost']= cf(init_sol['position'])
-    
-    #print(init_sol)
     
     if init_sol['cost']<bestsol['cost']:
         bestsol=copy.deepcopy(init_sol)
@@ -157,16 +154,10 @@ def ts_run(problem, params):
     return out
 
 
-# In[2]:
-
-
 def apply_bound (x, vmin, vmax):
     x['position'] = np.maximum(x['position'], vmin) #replace invalid value with minimum possible value
     x['position'] = np.minimum(x['position'], vmax-1) #replace invalid value with maximum possibe value
     return x
-
-
-# In[3]:
 
 
 def roulette_wheel_selection(n):
