@@ -1,8 +1,8 @@
-""" This script defines the Genetic Algortihm. 
+""" This script defines the Ant Colony Optimization Algortihm. 
 
 ***
 Its base functions and code were taken from: Mostapha Kalami Heris, Practical Genetic Algorithms in Python and MATLAB – Video Tutorial (URL: https://yarpiz.com/632/ypga191215-practical-genetic-algorithms-in-python-and-matlab), Yarpiz, 2020. 
-and adapted for the application to the Engineering Change domain.
+and adapted for the Ant Colony Optimization application and to the Engineering Change domain.
 ***
 
 """
