@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
-
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -20,11 +14,9 @@ get_ipython().run_line_magic('run', 'SA_algorithm_pure.ipynb')
 get_ipython().run_line_magic('run', 'TS_algorithm_pure.ipynb')
 
 
-# # Model Construction
-# 
-# ## Costfunction
+# Model Construction
 
-# In[ ]:
+## Costfunction
 
 
 #the costfunction is called by the algorithm and the given array(x) is the solution it generated. 
@@ -85,9 +77,7 @@ def costfunction(x):
     return totalcost
 
 
-# ### Supporting Function
-
-# In[ ]:
+### Supporting Function
 
 
 #the stock function is called by the algorithm and for the given array(x) the stock levels are calcualated. 
@@ -156,13 +146,10 @@ def calc_stock(x):
     return current_stock
 
 
-# # Parameter Sets
-
-# In[ ]:
-
+# Parameter Sets
 
 ga_params = {}
-ga_maxit = 100 # number of iterations of algorithm
+ga_maxit = 1000 # number of iterations of algorithm
 ga_npop = 50 # number of population
 ga_beta = 1
 ga_pc = 1 # child to parent ratio
@@ -171,9 +158,6 @@ ga_mu = 0.5 # percentage of genes mutated on average
 ga_sigma = 10
 
 ga_params = {'maxit':ga_maxit, 'npop':ga_npop, 'pc':ga_pc, 'gamma':ga_gamma, 'mu': ga_mu, 'sigma': ga_sigma, 'beta':ga_beta}
-
-
-# In[ ]:
 
 
 aco_params = {}
@@ -186,9 +170,6 @@ aco_rho = 0.005
 aco_params = {'maxit':aco_maxit, 'npop':aco_npop, 'alpha':aco_alpha, 'rho':aco_rho, 'beta':aco_beta}
 
 
-# In[ ]:
-
-
 pso_params = {}
 pso_maxit = 1001 # number of iterations of algorithm
 pso_npop = 50 # number of particles
@@ -196,9 +177,6 @@ pso_rho1 = 0.8
 pso_rho2 = 0.3
 
 pso_params = {'maxit':pso_maxit, 'npop':pso_npop, 'rho1':pso_rho1, 'rho2':pso_rho2}
-
-
-# In[ ]:
 
 
 sa_params = {}
@@ -211,9 +189,6 @@ sa_sigma = 5 # value to create searchspace
 sa_params = {'maxit':sa_maxit, 'temp':sa_temp, 'alpha':sa_alpha, 'temp_term':sa_temp_term, 'sigma': sa_sigma}
 
 
-# In[ ]:
-
-
 ts_params = {}
 ts_maxit = 1000 # number of iterations of algorithm
 ts_npop = 20 # size of neigborhood
@@ -222,9 +197,7 @@ ts_sigma = 5 # value to create searchspace
 ts_params = {'maxit':ts_maxit, 'npop':ts_npop, 'sigma': ts_sigma}
 
 
-# # Load Problem Input from data tables
-
-# In[ ]:
+# Load Problem Input from data tables
 
 
 #opens an empty problem as a dictionary
@@ -323,7 +296,7 @@ for EC in range(0,20):
             
     problem = {'costfunc':costfunction, 'nvar':nvar, 'varmin':varmin, 'varmax':varmax, 'calc_stock': calc_stock, 'parts':parts, 'independency':independency}
     
-    
+    # base date was given as the 25th of April, as this was the initial starting date of the deliveries in the test cases
     base = datetime.datetime.strptime('25/04/22', '%d/%m/%y')
     possible_date_list = np.array([base + datetime.timedelta(days=x) for x in range(varmax+1)], dtype='datetime64[ns]')
 
@@ -338,7 +311,7 @@ for EC in range(0,20):
         trackrecord_best[EC][alg]=[]
         trackrecord_best_sol[EC][alg]=[]
     
-    for run in range (50):
+    for run in range (200):
         print(run)
         # Import predefined initial solutions
         fileimport= "Init_sol/init_pos_pop_{}_{}.xlsx".format(EC, run)
@@ -416,8 +389,6 @@ df_tir_aco=pd.DataFrame(timerecord).to_csv(fileexport_tir,index=False, header=Fa
 df_bc_aco=pd.DataFrame(trackrecord_best).to_csv(fileexport_bc,index=False, header=False)
 df_bs_aco=pd.DataFrame(trackrecord_best_sol).to_csv(fileexport_bs,index=False, header=False)
 
-
-# In[ ]:
 
 
 
