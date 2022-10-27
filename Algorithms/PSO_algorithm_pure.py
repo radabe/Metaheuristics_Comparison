@@ -1,10 +1,13 @@
-#!/usr/bin/env python
-# coding: utf-8
+""" This script defines the Particle Swarm Optimization Algorithm. 
 
-# # The PSO Algorithm
+***
+Its base functions and code were taken from: Mostapha Kalami Heris, Practical Genetic Algorithms in Python and MATLAB – Video Tutorial (URL: https://yarpiz.com/632/ypga191215-practical-genetic-algorithms-in-python-and-matlab), Yarpiz, 2020. 
+and adapted for the Particle Swarm Optimization application and to the Engineering Change domain.
+***
 
-# In[1]:
+"""
 
+# The PSO Algorithm
 
 def pso_run(problem, params):
     
@@ -49,28 +52,28 @@ def pso_run(problem, params):
     bestcost = np.empty(maxit-1)
 
     #initialise swarm
-    #particle = [None]*kappa
+    particle = [None]*kappa
     for n in range (0, kappa):
-    #    validity=0
-    #    while validity < 1:
-    #        
+        validity=0
+        while validity < 1:
+            
         particle[n]= copy.deepcopy(empty_individual)
         particle[n]['position']=init_pop[n]
-    #        #toggle on off for effectivity date on single day
-    #        if indep ==0:
-    #            for j in range(number_var):
-    #                if ((j%3==1)&(j>2)):
-    #                    particle[n]['position'][j]=particle[n]['position'][j-int(number_var/no_parts)]
+            #toggle on off for effectivity date on single day
+            if indep ==0:
+                for j in range(number_var):
+                    if ((j%3==1)&(j>2)):
+                        particle[n]['position'][j]=particle[n]['position'][j-int(number_var/no_parts)]
         particle[n]['stock']=st(particle[n]['position'])
         particle[n]['cost']=cf(particle[n]['position'])
     
-    #        validity=0
-    #        for m in range (0, no_parts):
-    #            if particle[n]['stock'][m]<0:
-    #                validity -= 1
-    #            else:     
-    #                validity += 1
-    #        validity/= no_parts
+            validity=0
+            for m in range (0, no_parts):
+                if particle[n]['stock'][m]<0:
+                    validity -= 1
+                else:     
+                    validity += 1
+            validity/= no_parts
             
         if particle[n]['cost']<swarmbest['cost']:
             swarmbest=copy.deepcopy(particle[n])
@@ -120,17 +123,10 @@ def pso_run(problem, params):
         
     return out
 
-
-# In[2]:
-
-
 def apply_bound (x, vmin, vmax):
     x['position'] = np.maximum(x['position'], vmin) #replace invalid value with minimum possible value
     x['position'] = np.minimum(x['position'], vmax-1) #replace invalid value with maximum possibe value
     return x
-
-
-# In[3]:
 
 
 def apply_bound_velo (x, a, b):
