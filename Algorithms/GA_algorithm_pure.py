@@ -1,9 +1,11 @@
-#!/usr/bin/env python
-# coding: utf-8
+""" This script defines the Genetic Algortihm. 
 
-# # The Genetic Algorithm
+***
+Its base functions and code were taken from: Mostapha Kalami Heris, Practical Genetic Algorithms in Python and MATLAB – Video Tutorial (URL: https://yarpiz.com/632/ypga191215-practical-genetic-algorithms-in-python-and-matlab), Yarpiz, 2020. 
+and adapted for the application to the Engineering Change domain.
+***
 
-# In[1]:
+# The Genetic Algorithm
 
 
 def ga_run (problem, params):
@@ -48,28 +50,28 @@ def ga_run (problem, params):
         pop[n]['position']=init_pop[n]
        
     for i in range (0, npop):
-    #    validity=0
-    #    while validity < 1:
-    #        for j in range (prob_var):
-    #            #check if all on one day or on multiple days
-    #            if indep == 0:
-    #                if ((j%3==1) & (j>2)):
-    #                    pop[i]['position'][0][j]=pop[i]['position'][0][j-no_var]
-    #                else:
-    #                    pop[i]['position'][0][j]= np.random.randint(vmin,vmax)
-    #            else:
-    #                pop[i]['position'][0][j]= np.random.randint(vmin,vmax)
-    #            
+        validity=0
+        while validity < 1:
+            for j in range (prob_var):
+                #check if all on one day or on multiple days
+                if indep == 0:
+                    if ((j%3==1) & (j>2)):
+                        pop[i]['position'][0][j]=pop[i]['position'][0][j-no_var]
+                    else:
+                        pop[i]['position'][0][j]= np.random.randint(vmin,vmax)
+                else:
+                    pop[i]['position'][0][j]= np.random.randint(vmin,vmax)
+                
         pop[i]['stock'] = st(pop[i]['position'])
              
-    #        for j in range (0, no_parts):
-    #            if (pop[i]['stock'][j]<0):
-    #                validity -= 1
-    #            else:
-    #                validity += 1
-    #        
-    #        validity/= no_parts
-    #    if validity==1:
+            for j in range (0, no_parts):
+                if (pop[i]['stock'][j]<0):
+                    validity -= 1
+                else:
+                    validity += 1
+            
+            validity/= no_parts
+        if validity==1:
         pop[i]['cost']= cf(pop[i]['position'])
         if pop[i]['cost']<bestsol['cost']:
             bestsol=copy.deepcopy(pop[i])
@@ -165,9 +167,6 @@ def ga_run (problem, params):
     return out
 
 
-# In[2]:
-
-
 def crossover(p1, p2, gamma):
     c1= copy.deepcopy(p1)
     c2= copy.deepcopy(p2)
@@ -177,17 +176,12 @@ def crossover(p1, p2, gamma):
     return c1, c2
 
 
-# In[3]:
-
-
 def mutate(x, mu, sigma):
     y = copy.deepcopy(x)
     ind = np.argwhere(np.random.rand(*x['position'].shape) <= mu) #find index where x smaller then the mutation factor
     y['position'][ind] = y['position'][ind] + np.random.randint(-sigma,sigma, size=ind.shape)
     return y
 
-
-# In[4]:
 
 
 def apply_bound (x, vmin, vmax):
@@ -196,7 +190,6 @@ def apply_bound (x, vmin, vmax):
     return x
 
 
-# In[5]:
 
 
 def roulette_wheel_selection(p):
@@ -206,17 +199,6 @@ def roulette_wheel_selection(p):
     return ind[0][0]
 
 
-# In[6]:
-
-
 def rounding(x):
     x['position'] = np.around(x['position'])
     return x
-
-
-# In[7]:
-
-
-def check_buildability():
-    return
-
