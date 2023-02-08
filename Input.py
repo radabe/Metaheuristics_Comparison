@@ -29,53 +29,33 @@ get_ipython().run_line_magic('run', 'TS_algorithm_pure.ipynb')
 #is defined as [p1y1,p1d2,p1d3,p2y1,p2d2,p2d3,p3y1,p3d2,p3d3]
 def costfunction(x):
     
-    #set costs and counter to zero.
-    #sets delivery controller to one
-    totalcost = 0 
+    totalcost = 0
     
-    
-    #for each subsequent part, the values are shifted by the number of variables
+    n=0
     for i in range(0,parts):
-        c1 = 1
-        y1 = int((x[detvar*i])) # value from algorithm for % of last delivery
-        d2 = int((x[detvar*i+1])) #index from algorithm for effectivity date
-        d3 = int((x[detvar*i+2])) #index from algorithm for last delivery date
-        
-        #to get the last date for production and delivery, 
-        #the generated d2 and d3 values are used to identify the d2th and d3th element in the possible date list
-        #afterward, the possible date list is compared to the production dates
-        #the length-1 of the resulting array =index is the index of the effectivity date
-        y2 = len(np.argwhere(possible_date_list[d2]>=plan_prod_dates[i]))-1 #returns the index of the last entry in prod_plan
-        
-        #if d2 or d3 are 0, the length would be 0. Thus, by reducing by 1,
-        #y2 would be -1 which would result the entire production plan array
+        y1 = int((x[n+i])) # value from algorithm for % of last delivery
+        d2 = int((x[n+i+1])) #index from algorithm for possible date
+        d3 = int((x[n+i+2])) #index from algorithm for possible date
+        y2 = len(np.argwhere(plan_prod_dates[i]<=possible_date_list[d2]))-1 #returns the index of the last entry in prod_plan
         if y2 < 0:
             y2=0
-        
-        #same for d3
-        y3 = len(np.argwhere(possible_date_list[d3]>=call_off_dates[i]))-1 # returns the index of the last entry in call_off
+        y3 = len(np.argwhere(call_off_dates[i]<=possible_date_list[d3]))-1 # returns the index of the last entry in call_off
         if y3<0:
             y3=0
-        
-        # checks the length of the resulting array of call-offs. 
-        # if the length is 0, no call-off is changed -> y1 is 0, and c1 is 0 instead of 1
         a=np.nonzero(call_off[i][0:y3])
+        if y1==100:
+            hc=0
+        else:
+            hc=50
         if len(a[0])==0:
             y1=0
-            c1=0
             
-        #sum of production figures and deliveries until y2 and y3
-        #sum_prod is multiplicated by -1 as consumation is negative in the data set
         sum_prod = np.sum(plan_prod[i][0:y2])*-1
         sum_stock = np.sum(call_off[i][0:y3],initial=stock[i])
-        
-        #costs are calculated as the sum of the kontext costs*production figures 
-        #with old configuration and the product costs*the stock
-        #additinally, a penalty is calculated if the delivery is modified (and checked by c1 if actually changed)
-        totalcost = totalcost + const_prod*sum_prod+const_stock[i]*(sum_stock-sum_prod)+(1-(y1/100))*pen_deliver_mod[i]*c1
-        
+        totalcost = totalcost + const_prod*sum_prod+const_stock[i]*(sum_stock-sum_prod)+hc+(1-(y1/100))*100
+        n=n+2
+    
     return totalcost
-
 
 ### Supporting Function
 
@@ -88,59 +68,33 @@ def costfunction(x):
 #the cost calculation is repeated for each part in a change context
 #a solution for 3 parts for instance has 3 triplets, and the array 
 #is defined as [p1y1,p1d2,p1d3,p2y1,p2d2,p2d3,p3y1,p3d2,p3d3]
-def calc_stock(x): 
-    
-    #generates an empty list of length equal to number of parts
+def calc_stock(x): #calculate available stock
     c_stock = [None]*parts
     n=0
-  
-    
-    #for each subsequent part, the values are shifted by the number of variables
     for i in range(0,parts):
-        y1 = int((x[detvar*i])) # value from algorithm for % of last delivery
-        d2 = int((x[detvar*i+1])) #index from algorithm for effectivity date
-        d3 = int((x[detvar*i+2])) #index from algorithm for last delivery date
-                    
-         #to get the last date for production and delivery, 
-        #the generated d2 and d3 values are used to identify the d2th and d3th element in the possible date list
-        #afterward, the possible date list is compared to the production dates
-        #the length-1 of the resulting array =index is the index of the effectivity date
-        y2 = len(np.argwhere(possible_date_list[d2]>=plan_prod_dates[i]))-1 #returns the index of the last entry in prod_plan
-        
-        #if d2 or d3 are 0, the length would be 0. Thus, by reducing by 1,
-        #y2 would be -1 which would result the entire production plan array
-        if y2 < 0:
+        y1 = int((x[n+i]))
+        d2 = int((x[n+i+1])) #index from algorithm for possible date
+        d3 = int((x[n+i+2])) #index from algorithm for possible date
+        y2 = len(np.argwhere(plan_prod_dates[i]<=possible_date_list[d2]))-1 #returns the index of the last entry in prod_plan
+        if y2<0:
             y2=0
-        
-        #same for d3
-        y3 = len(np.argwhere(possible_date_list[d3]>=call_off_dates[i]))-1 # returns the index of the last entry in call_off
+        y3 = len(np.argwhere(call_off_dates[i]<=possible_date_list[d3]))-1 # returns the index of the last entry in call_off
         if y3<0:
             y3=0
-            
-        #checks if an call_off is actually changed
         a=np.nonzero(call_off[i][0:y3])
         if len(a[0])>0:
-            
-            #saves the currently planned delivery quantity of the last delivery
-            #np.nonzero returns the index of the values that are not 0 as an array
-            #the max value of this array is the index of the last delivery in the call_off array
             save_value=call_off[i][np.max(np.nonzero(call_off[i][0:y3]))]
             store_i=i
             store_max=np.max(np.nonzero(call_off[i][0:y3]))
-            
-            #the last delivery quantity is modified for stock calculation
             call_off[i][np.max(np.nonzero(call_off[i][0:y3]))]=np.around(call_off[i][np.max(np.nonzero(call_off[i][0:y3]))]*(y1/100))
-            
-            #the resulting stock is calculated and stored in the stock list
             c_stock[i] = (np.sum(call_off[i][0:y3],initial=stock[i])- np.sum(plan_prod[i][0:y2])*-1)
         else:
-            
-            #if no delivery is changed, the stock is simply initial stock - production figures
             c_stock[i] = stock[i]- np.sum(plan_prod[i][0:y2])*-1
             
-        #if the delviery quantity was changed, the initial values is restored    
         if len(a[0])>0:
             call_off[store_i][store_max]=save_value
+        
+        n=n+2
         
     current_stock=c_stock
     return current_stock
@@ -184,7 +138,7 @@ sa_maxit = 1000 # number of iterations of algorithm
 sa_temp = 2000 # initial temprature
 sa_alpha = 0.99999
 sa_temp_term = 10
-sa_sigma = 5 # value to create searchspace
+sa_sigma = 30 # value to create searchspace
 
 sa_params = {'maxit':sa_maxit, 'temp':sa_temp, 'alpha':sa_alpha, 'temp_term':sa_temp_term, 'sigma': sa_sigma}
 
@@ -192,7 +146,7 @@ sa_params = {'maxit':sa_maxit, 'temp':sa_temp, 'alpha':sa_alpha, 'temp_term':sa_
 ts_params = {}
 ts_maxit = 1000 # number of iterations of algorithm
 ts_npop = 20 # size of neigborhood
-ts_sigma = 5 # value to create searchspace
+ts_sigma = 30 # value to create searchspace
 
 ts_params = {'maxit':ts_maxit, 'npop':ts_npop, 'sigma': ts_sigma}
 
@@ -380,8 +334,8 @@ for EC in range(0,20):
         trackrecord_best[EC][4].append(min(sa_out['bestcost']))
         trackrecord_best_sol[EC][4].append(sa_out['bestsol'])
 
-fileexport_trr='trackrecord_aco.csv'
-fileexport_tir='timerecord_aco.csv'
+fileexport_trr='trackrecord.csv'
+fileexport_tir='timerecord.csv'
 fileexport_bc='best_cost.csv'
 fileexport_bs='trackrecord_bestsol.csv'
 df_trr_aco=pd.DataFrame(trackrecord).to_csv(fileexport_trr,index=False, header=False)
