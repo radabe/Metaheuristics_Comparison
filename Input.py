@@ -170,7 +170,7 @@ batch_list=list(test_set['Batch'][0:20])
 for EC in range(0,20):
     
     #this takes the change batch as an input -> would be the data in additional tables
-    problem_df=pd.read_excel(io=file_name,sheet_name=batch_list[EC], engine='openpyxl')
+    problem_df=pd.read_excel(io=file_name,sheet_name=batch_{}.format(EC), engine='openpyxl')
     
     #number of rows = number of parts / scenarios to be calculated
     parts = len(problem_df['part_old'].dropna())
