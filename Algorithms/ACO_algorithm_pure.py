@@ -53,7 +53,10 @@ def aco_run(problem, params):
         ants[n]['position']=init_pop[n]
         ants[n]['cost']=cf(ants[n]['position'])
         for j in range(0,number_var-1):
-            phero_matrix[(j*vmax)+(int(ants[n]['position'][j]))][(j+1)*vmax+(int(ants[n]['position'][j+1]))]+=(1/(ants[n]['cost']))
+            if ants[n]['cost']>0:
+                phero_matrix[(j*vmax)+(int(ants[n]['position'][j]))][(j+1)*vmax+(int(ants[n]['position'][j+1]))]+=(1/ants[n]['cost'])
+            else:
+                phero_matrix[(j*vmax)+(int(ants[n]['position'][j]))][(j+1)*vmax+(int(ants[n]['position'][j+1]))]+=(1/0.1)
 
     # Define initial solution 
     init_sol = copy.deepcopy(empty_individual)
@@ -96,7 +99,10 @@ def aco_run(problem, params):
             if validity >= 0:
                 ants[n]['cost']=cf(ants[n]['position'][0])
                 for j in range(0,number_var-1):
-                    phero_matrix[(j*vmax)+(int(ants[n]['position'][0][j]))][(j+1)*vmax+(int(ants[n]['position'][0][j+1]))]+=(1/ants[n]['cost'])
+                    if ants[n]['cost']>0:
+                        phero_matrix[(j*vmax)+(int(ants[n]['position'][0][j]))][(j+1)*vmax+(int(ants[n]['position'][0][j+1]))]+=(1/ants[n]['cost'])
+                    else:
+                        phero_matrix[(j*vmax)+(int(ants[n]['position'][0][j]))][(j+1)*vmax+(int(ants[n]['position'][0][j+1]))]+=(1/0.1)
                 if ants[n]['cost']<bestsol['cost']:
                     bestsol=copy.deepcopy(ants[n])
             validity = 0
