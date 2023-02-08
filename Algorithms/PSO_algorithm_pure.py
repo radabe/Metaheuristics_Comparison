@@ -24,8 +24,8 @@ def pso_run(problem, params):
     
     # Parameters
     maxit = params['maxit'] # number of iterations
-    rho1 = params['rho1'] # Evaporation rate [0.01, 0.2]
-    rho2 = params['rho2'] # Evaporation rate [0.01, 0.2]
+    rho1 = params['rho1'] # 
+    rho2 = params['rho2'] # 
     kappa = params['npop'] #Number of ants [10,50]
     
     # Empty Individual Template
@@ -88,7 +88,7 @@ def pso_run(problem, params):
         for n in range(kappa):
             validity=0
             temp_velocity[n]=0.9*(velocity[it][n])+rho1*np.random.rand()*(particlebest[n]['position']-swarm[it][n]['position'])+rho2*np.random.rand()*(swarmbest['position']-swarm[it][n]['position'])
-            temp_velocity[n]=apply_bound_velo(temp_velocity[n],-5,5)
+            temp_velocity[n]=apply_bound_velo(temp_velocity[n],-15,15)
             particle[n]['position']=np.around(particle[n]['position'][0]+temp_velocity[n][0])
             apply_bound(particle[n], vmin, vmax)
             particle[n]['stock']=st(particle[n]['position'])
