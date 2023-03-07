@@ -151,7 +151,94 @@ ts_sigma = 15 # value to create searchspace
 
 ts_params = {'maxit':ts_maxit, 'npop':ts_npop, 'sigma': ts_sigma}
 
+# Generate initial solutions
+# Code for calculating initial solutions
 
+no_EC=2
+no_runs=200
+
+file_name='Testset_example_.xlsx'
+test_set=pd.read_excel(io=file_name)
+
+batch_list=list(test_set['Kontext'][0:no_EC])
+
+for EC in range(0,no_EC):
+    print(EC)
+    problem_df=pd.read_excel(io=file_name,sheet_name=batch_list[EC])
+    parts = len(problem_df['teil_alt'])
+    nvar = 3*parts
+    varmin = 0
+    varmax = 101
+    no_draw = problem_df['MDB_ZEICHNR'].nunique()
+    if no_draw !=1:
+        independency = 0
+    else:
+        independency = 1
+    stock=[None]*parts
+    call_off=[None]*parts
+    plan_prod=[None]*parts
+    const_stock=[None]*parts
+    call_off_dates=[None]*parts
+    plan_prod_dates=[None]*parts
+
+    for prt in range(parts):
+        stock[prt]=int(problem_df['Current_Stocklevel'][prt]/1000)
+        call_off[prt]=ast.literal_eval(problem_df['Call_offs_List'][prt])
+        call_off_dates[prt]=(pd.to_datetime(problem_df['Delivery_Date_List'][prt][2:-2].split(','),yearfirst=True)).to_numpy()
+        plan_prod[prt]=ast.literal_eval(problem_df['Summe_Bedarfe_List'][prt])
+        plan_prod_dates[prt]=(pd.to_datetime(problem_df['Consumation_Date_List'][prt][2:-2].split(','),yearfirst=True)).to_numpy()
+        const_stock[prt]=problem_df['unitp'][prt]
+        const_prod=test_set['gwk'][EC]
+
+    base = datetime.datetime.strptime('25/04/21', '%d/%m/%y')
+    possible_date_list = np.array([base + datetime.timedelta(days=x) for x in range(varmax)], dtype='datetime64[ns]')
+         
+    # Empty Individual Template
+    empty_individual = {}
+    empty_individual = {'position':None,'cost':None, 'stock':None}
+    empty_individual['position']=np.zeros((1,nvar))
+
+    for run in range(no_runs):
+        init_pos_pop = []
+        
+        fileexport= "Init_sol/init_pos_pop_{}_{}.xlsx".format(EC, run)
+        
+        #print('start calculating init pop, 50 is the maximum population of all algorithms')
+        for i in range(50):
+            
+            #generate initial random solution
+            validity=0
+            init_sol=copy.deepcopy(empty_individual)
+            
+            # check that only valid solutions are generated as initial solutions
+            while validity < 1:
+                validity=0
+
+                init_sol['position'] = np.random.randint(varmin,varmax, nvar)
+                #set all effectivity dates to same value
+                if independency == 0:
+                    for j in range(nvar):
+                        if ((j%3==1)&(j>2)):
+                            init_sol['position'][j]=init_sol['position'][j-int(nvar/parts)]
+                           
+                init_sol['stock'] = calc_stock(init_sol['position'])
+
+                for j in range (0, parts):
+                    if (init_sol['stock'][j]<0):
+                        validity -= 1
+                    else:
+                        validity += 1
+
+                validity/= parts
+
+            init_pos_pop.append(init_sol['position'])
+
+        print(str(EC) + ' & ' + str(run))
+        df=pd.DataFrame(init_pos_pop)
+        df.to_excel(fileexport,index=False, header=False)
+
+        
+# Execute Benchmark 
 # Load Problem Input from data tables
 
 
@@ -247,9 +334,24 @@ for EC in range(0,20):
         
         #cost price for each change context -> taken from level 0
         const_prod=test_set['warranty'][EC]
+        
+    for run in range (no_runs):
+        
+        # import previously generated initial solutions
+        fileimport= "Init_sol/init_pos_pop_{}_{}.xlsx".format(EC, run)
+        init_pop_df=pd.read_excel(fileimport, header=None, engine='openpyxl')
+        init_pop=[]
+        init_cost=np.inf
+        for n in range(50):
+            init_pos=init_pop_df.iloc[n].to_numpy()
+            temp_cost=costfunction(init_pos)
+            if temp_cost<init_cost:
+                best_init=init_pos
+            init_pop.append(init_pos)
            
             
-    problem = {'costfunc':costfunction, 'nvar':nvar, 'varmin':varmin, 'varmax':varmax, 'calc_stock': calc_stock, 'parts':parts, 'independency':independency}
+    problem = {'costfunc':costfunction, 'nvar':nvar, 'varmin':varmin, 'varmax':varmax, 'calc_stock': calc_stock, 'parts':parts, 
+               'independency':independency, 'init_pop':init_pop, 'best_init':best_init}
     
     # base date was given as the 25th of April, as this was the earliest  starting date of the deliveries in the test cases
     base = datetime.datetime.strptime('25/04/22', '%d/%m/%y')
