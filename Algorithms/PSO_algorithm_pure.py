@@ -52,30 +52,32 @@ def pso_run(problem, params):
     # Best Cost of Iterations
     bestcost = np.empty(maxit-1)
 
-    #initialise swarm
-    particle = [None]*kappa
-    for n in range (0, kappa):
-        validity=0
-        while validity < 1:
-            
-        particle[n]= copy.deepcopy(empty_individual)
-        particle[n]['position']=init_pop[n]
-            #toggle on off for effectivity date on single day
-            if indep ==0:
-                for j in range(number_var):
-                    if ((j%3==1)&(j>2)):
-                        particle[n]['position'][j]=particle[n]['position'][j-int(number_var/no_parts)]
-        particle[n]['stock']=st(particle[n]['position'])
-        particle[n]['cost']=cf(particle[n]['position'])
-    
+    #initialise swarm if none available
+    if len(init_pop)<1:
+        particle = [None]*kappa
+        for n in range (0, kappa):
             validity=0
-            for m in range (0, no_parts):
-                if particle[n]['stock'][m]<0:
-                    validity -= 1
-                else:     
-                    validity += 1
-            validity/= no_parts
-            
+            while validity < 1:
+
+            particle[n]= copy.deepcopy(empty_individual)
+            particle[n]['position']=init_pop[n]
+                #toggle on off for effectivity date on single day
+                if indep ==0:
+                    for j in range(number_var):
+                        if ((j%3==1)&(j>2)):
+                            particle[n]['position'][j]=particle[n]['position'][j-int(number_var/no_parts)]
+            particle[n]['stock']=st(particle[n]['position'])
+            particle[n]['cost']=cf(particle[n]['position'])
+
+                validity=0
+                for m in range (0, no_parts):
+                    if particle[n]['stock'][m]<0:
+                        validity -= 1
+                    else:     
+                        validity += 1
+                validity/= no_parts
+                
+    for n in range(kappa):
         if particle[n]['cost']<swarmbest['cost']:
             swarmbest=copy.deepcopy(particle[n])
         if particle[n]['cost']<particlebest[n]['cost']:
