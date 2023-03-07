@@ -37,23 +37,24 @@ def sa_run(problem, params):
     bestsol = copy.deepcopy(empty_individual)
     bestsol['cost']= np.inf
     
-    #generate initial random solution
-    validity=0
-    init_sol=copy.deepcopy(empty_individual)
-    while validity < 1:
+    #generate initial random solution if none available
+    if len(best_init)<1:
         validity=0
-    init_sol['position'] = best_init
-    init_sol['stock'] = st(init_sol['position'])
-    init_sol['cost']= cf(init_sol['position'])
+        init_sol=copy.deepcopy(empty_individual)
+        while validity < 1:
+            validity=0
+        init_sol['position'] = best_init
+        init_sol['stock'] = st(init_sol['position'])
+        init_sol['cost']= cf(init_sol['position'])
 
-        for j in range (0, no_parts):
-            if (init_sol['stock'][j]<0):
-                validity -= 1
-           else:
-                validity += 1
+            for j in range (0, no_parts):
+                if (init_sol['stock'][j]<0):
+                    validity -= 1
+               else:
+                    validity += 1
 
-        validity/= no_parts
-    
+            validity/= no_parts
+
     if init_sol['cost']<bestsol['cost']:
         bestsol=copy.deepcopy(init_sol)
         
