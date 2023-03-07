@@ -36,10 +36,10 @@ def costfunction(x):
         y1 = int((x[n+i])) # value from algorithm for % of last delivery
         d2 = int((x[n+i+1])) #index from algorithm for possible date
         d3 = int((x[n+i+2])) #index from algorithm for possible date
-        y2 = len(np.argwhere(plan_prod_dates[i]<=possible_date_list[d2]))-1 #returns the index of the last entry in prod_plan
+        y2 = len(np.argwhere(plan_prod_dates[i]<=possible_date_list[d2])) #returns the index of the last entry in prod_plan
         if y2 < 0:
             y2=0
-        y3 = len(np.argwhere(call_off_dates[i]<=possible_date_list[d3]))-1 # returns the index of the last entry in call_off
+        y3 = len(np.argwhere(call_off_dates[i]<=possible_date_list[d3])) # returns the index of the last entry in call_off
         if y3<0:
             y3=0
         a=np.nonzero(call_off[i][0:y3])
@@ -109,7 +109,7 @@ ga_beta = 1
 ga_pc = 1 # child to parent ratio
 ga_gamma = 0.9 # adds level of exploration
 ga_mu = 0.5 # percentage of genes mutated on average
-ga_sigma = 10
+ga_sigma = 15
 
 ga_params = {'maxit':ga_maxit, 'npop':ga_npop, 'pc':ga_pc, 'gamma':ga_gamma, 'mu': ga_mu, 'sigma': ga_sigma, 'beta':ga_beta}
 
@@ -138,7 +138,7 @@ sa_maxit = 1000 # number of iterations of algorithm
 sa_temp = 2000 # initial temprature
 sa_alpha = 0.99999
 sa_temp_term = 10
-sa_sigma = 30 # value to create searchspace
+sa_sigma = 15 # value to create searchspace
 
 sa_params = {'maxit':sa_maxit, 'temp':sa_temp, 'alpha':sa_alpha, 'temp_term':sa_temp_term, 'sigma': sa_sigma}
 
@@ -146,7 +146,7 @@ sa_params = {'maxit':sa_maxit, 'temp':sa_temp, 'alpha':sa_alpha, 'temp_term':sa_
 ts_params = {}
 ts_maxit = 1000 # number of iterations of algorithm
 ts_npop = 20 # size of neigborhood
-ts_sigma = 30 # value to create searchspace
+ts_sigma = 15 # value to create searchspace
 
 ts_params = {'maxit':ts_maxit, 'npop':ts_npop, 'sigma': ts_sigma}
 
@@ -250,7 +250,7 @@ for EC in range(0,20):
             
     problem = {'costfunc':costfunction, 'nvar':nvar, 'varmin':varmin, 'varmax':varmax, 'calc_stock': calc_stock, 'parts':parts, 'independency':independency}
     
-    # base date was given as the 25th of April, as this was the initial starting date of the deliveries in the test cases
+    # base date was given as the 25th of April, as this was the earliest  starting date of the deliveries in the test cases
     base = datetime.datetime.strptime('25/04/22', '%d/%m/%y')
     possible_date_list = np.array([base + datetime.timedelta(days=x) for x in range(varmax+1)], dtype='datetime64[ns]')
 
