@@ -46,17 +46,18 @@ def aco_run(problem, params):
         if (i % 3 == 2):
             phero_matrix[vmax*(i-1):(vmax*i),(vmax)+vmax*(i-1):(vmax)+vmax*i]-=diag
     
-    #Initialise ants and update initial pheromone matrix
-    ants = [None]*kappa
-    for n in range (0, kappa):
-        ants[n]= copy.deepcopy(empty_individual)
-        ants[n]['position']=init_pop[n]
-        ants[n]['cost']=cf(ants[n]['position'])
-        for j in range(0,number_var-1):
-            if ants[n]['cost']>0:
-                phero_matrix[(j*vmax)+(int(ants[n]['position'][j]))][(j+1)*vmax+(int(ants[n]['position'][j+1]))]+=(1/ants[n]['cost'])
-            else:
-                phero_matrix[(j*vmax)+(int(ants[n]['position'][j]))][(j+1)*vmax+(int(ants[n]['position'][j+1]))]+=(1/0.1)
+    #Initialise ants and update initial pheromone matrix if none available
+    if len(init_pop)<1:
+        ants = [None]*kappa
+        for n in range (0, kappa):
+            ants[n]= copy.deepcopy(empty_individual)
+            ants[n]['position']=init_pop[n]
+            ants[n]['cost']=cf(ants[n]['position'])
+            for j in range(0,number_var-1):
+                if ants[n]['cost']>0:
+                    phero_matrix[(j*vmax)+(int(ants[n]['position'][j]))][(j+1)*vmax+(int(ants[n]['position'][j+1]))]+=(1/ants[n]['cost'])
+                else:
+                    phero_matrix[(j*vmax)+(int(ants[n]['position'][j]))][(j+1)*vmax+(int(ants[n]['position'][j+1]))]+=(1/0.1)
 
     # Define initial solution 
     init_sol = copy.deepcopy(empty_individual)
