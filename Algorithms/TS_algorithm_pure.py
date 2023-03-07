@@ -38,33 +38,34 @@ def ts_run(problem, params):
     # Initialize initial solution
     init_sol=copy.deepcopy(empty_individual)
     
-    #generate initial random solution
-    validity=0
-    
-    while validity < 1:
-       validity=0
-       init_sol['position'] = np.random.randint(vmin,vmax, number_var)
-       #set all effectivity dates to same value
-       if indep == 0:
-           for j in range(number_var):
-               if ((j%3==1)&(j>2)):
-                   init_sol['position'][j]=init_sol['position'][j-int(number_var/no_parts)]
-       
-       init_sol['stock'] = st(init_sol['position'])
-       init_sol['cost']= cf(init_sol['position'])
-       
-       for j in range (0, no_parts):
-           if (init_sol['stock'][j]<0):
-               validity -= 1
-           else:
-               validity += 1
-           
-       validity/= no_parts
-    
-    init_sol['position'] = best_init
-    init_sol['stock'] = st(init_sol['position'])
-    init_sol['cost']= cf(init_sol['position'])
-    
+    #generate initial random solution if none available
+    if len(best_init)<1:
+        validity=0
+
+        while validity < 1:
+           validity=0
+           init_sol['position'] = np.random.randint(vmin,vmax, number_var)
+           #set all effectivity dates to same value
+           if indep == 0:
+               for j in range(number_var):
+                   if ((j%3==1)&(j>2)):
+                       init_sol['position'][j]=init_sol['position'][j-int(number_var/no_parts)]
+
+           init_sol['stock'] = st(init_sol['position'])
+           init_sol['cost']= cf(init_sol['position'])
+
+           for j in range (0, no_parts):
+               if (init_sol['stock'][j]<0):
+                   validity -= 1
+               else:
+                   validity += 1
+
+           validity/= no_parts
+
+        init_sol['position'] = best_init
+        init_sol['stock'] = st(init_sol['position'])
+        init_sol['cost']= cf(init_sol['position'])
+
     if init_sol['cost']<bestsol['cost']:
         bestsol=copy.deepcopy(init_sol)
         
