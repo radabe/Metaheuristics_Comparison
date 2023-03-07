@@ -21,6 +21,7 @@ def pso_run(problem, params):
     no_parts = problem['parts']
     indep = problem['independency']
     validity=0
+    max_v = problem['Vmax']
     
     # Parameters
     maxit = params['maxit'] # number of iterations
@@ -88,7 +89,7 @@ def pso_run(problem, params):
         for n in range(kappa):
             validity=0
             temp_velocity[n]=0.9*(velocity[it][n])+rho1*np.random.rand()*(particlebest[n]['position']-swarm[it][n]['position'])+rho2*np.random.rand()*(swarmbest['position']-swarm[it][n]['position'])
-            temp_velocity[n]=apply_bound_velo(temp_velocity[n],-15,15)
+            temp_velocity[n]=apply_bound_velo(temp_velocity[n],-max_v,max_v)
             particle[n]['position']=np.around(particle[n]['position'][0]+temp_velocity[n][0])
             apply_bound(particle[n], vmin, vmax)
             particle[n]['stock']=st(particle[n]['position'])
