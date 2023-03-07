@@ -98,7 +98,10 @@ def aco_run(problem, params):
             #if valid, calculate cost
             if validity >= 0:
                 ants[n]['cost']=cf(ants[n]['position'][0])
-                for j in range(0,number_var-1):
+                for j in range(0,number_var-1):              
+                    #update pheromatrix online
+                    #reinforcment phase
+                    
                     if ants[n]['cost']>0:
                         phero_matrix[(j*vmax)+(int(ants[n]['position'][0][j]))][(j+1)*vmax+(int(ants[n]['position'][0][j+1]))]+=(1/ants[n]['cost'])
                     else:
@@ -107,16 +110,13 @@ def aco_run(problem, params):
                     bestsol=copy.deepcopy(ants[n])
             validity = 0
                 
-                #update pheromatrix online
 
                 #add ants to list
             
         #pheromone update
         #evaporation
         phero_matrix *= (1-rho)
-        
-        #reinforcment phase
-        
+               
         # Store Best Cost
         bestcost[it]=bestsol['cost']
         
