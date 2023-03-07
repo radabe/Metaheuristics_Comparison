@@ -129,8 +129,9 @@ pso_maxit = 1001 # number of iterations of algorithm
 pso_npop = 50 # number of particles
 pso_rho1 = 0.8
 pso_rho2 = 0.3
+pso_vmax = 15
 
-pso_params = {'maxit':pso_maxit, 'npop':pso_npop, 'rho1':pso_rho1, 'rho2':pso_rho2}
+pso_params = {'maxit':pso_maxit, 'npop':pso_npop, 'rho1':pso_rho1, 'rho2':pso_rho2, 'vmax':pso_vmax}
 
 
 sa_params = {}
