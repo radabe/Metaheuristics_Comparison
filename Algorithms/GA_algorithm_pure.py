@@ -45,38 +45,40 @@ def ga_run (problem, params):
     bestsol = copy.deepcopy(empty_individual)
     bestsol['cost']= np.inf
     
-    # Initialize Population
-    pop = [None]*npop
-    for n in range (0, npop):
-        pop[n] = empty_individual
-        pop[n]['position']=init_pop[n]
-       
-    for i in range (0, npop):
-        validity=0
-        while validity < 1:
-            for j in range (prob_var):
-                #check if all on one day or on multiple days
-                if indep == 0:
-                    if ((j%3==1) & (j>2)):
-                        pop[i]['position'][0][j]=pop[i]['position'][0][j-no_var]
+    # Initialize Population if none available
+    
+    if len(init_pop)<1:
+        pop = [None]*npop
+        for n in range (0, npop):
+            pop[n] = empty_individual
+            pop[n]['position']=init_pop[n]
+
+        for i in range (0, npop):
+            validity=0
+            while validity < 1:
+                for j in range (prob_var):
+                    #check if all on one day or on multiple days
+                    if indep == 0:
+                        if ((j%3==1) & (j>2)):
+                            pop[i]['position'][0][j]=pop[i]['position'][0][j-no_var]
+                        else:
+                            pop[i]['position'][0][j]= np.random.randint(vmin,vmax)
                     else:
                         pop[i]['position'][0][j]= np.random.randint(vmin,vmax)
-                else:
-                    pop[i]['position'][0][j]= np.random.randint(vmin,vmax)
-                
-        pop[i]['stock'] = st(pop[i]['position'])
-             
-            for j in range (0, no_parts):
-                if (pop[i]['stock'][j]<0):
-                    validity -= 1
-                else:
-                    validity += 1
-            
-            validity/= no_parts
-        if validity==1:
-        pop[i]['cost']= cf(pop[i]['position'])
-        if pop[i]['cost']<bestsol['cost']:
-            bestsol=copy.deepcopy(pop[i])
+
+            pop[i]['stock'] = st(pop[i]['position'])
+
+                for j in range (0, no_parts):
+                    if (pop[i]['stock'][j]<0):
+                        validity -= 1
+                    else:
+                        validity += 1
+
+                validity/= no_parts
+            if validity==1:
+            pop[i]['cost']= cf(pop[i]['position'])
+            if pop[i]['cost']<bestsol['cost']:
+                bestsol=copy.deepcopy(pop[i])
         
     # Best Cost of Iterations
     bestcost = np.empty(maxit)
